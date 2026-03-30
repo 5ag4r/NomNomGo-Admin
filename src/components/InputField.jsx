@@ -1,14 +1,18 @@
-const InputField = ({ type, placeholder }) => {
+// src/components/InputField.jsx
+const InputField = ({ type, placeholder, value, onChange, onKeyPress }) => {
   return (
     <input
       type={type}
       placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      onKeyPress={onKeyPress}
       style={{
         width: "100%",
-        padding: "12px",
-        margin: "8px 0",
-        borderRadius: "10px",
-        border: "none",
+        padding: "10px",
+        marginBottom: "10px",
+        border: "1px solid #ccc",
+        borderRadius: "5px",
         outline: "none",
       }}
     />
