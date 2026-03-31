@@ -1,10 +1,15 @@
-// src/pages/Dashboard.jsx
-import React from "react";
+import API from "../services/api";
 
 const Dashboard = () => {
+  const handleLogout = async () => {
+    await API.post("/users/logout");
+    window.location.href = "/";
+  };
+
   return (
     <div>
-      <h1>Hello from Dashboard</h1>
+      <h1>Dashboard</h1>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

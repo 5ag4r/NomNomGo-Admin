@@ -1,9 +1,8 @@
-// src/pages/Login.jsx
 import { useState } from "react";
 import InputField from "../components/InputField";
 import Button from "../components/button";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../services/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,38 +12,35 @@ const Login = () => {
 
   // Login function
   const handleLogin = async () => {
-  setError("");
+    setError("");
 
-  if (!email || !password) {
-    setError("Please enter email and password");
-    return;
-  }
-
-  try {
-    const response = await axios.post(
-      "http://localhost:5000/api/users/login",
-      { email, password }
-    );
-
-    // ✅ Extract token and user from response
-    const { token, user } = response.data;
-
-    // ✅ Check role
-    if (user.role !== "admin") {
-      setError("Access denied. Admins only.");
+    if (!email || !password) {
+      setError("Please enter email and password");
       return;
     }
 
-    // Save token
-    localStorage.setItem("adminToken", token);
+    try {
+      const response = await API.post(
+        "/users/login",
+        { email, password },
+        { withCredentials: true } // 🔥 VERY IMPORTANT
+      );
 
-    // Redirect
-    navigate("/dashboard");
+      const { user } = response.data;
 
-  } catch (err) {
-    setError(err.response?.data?.message || "Login failed");
-  }
-};
+      // 🔐 Admin check
+      if (user.role !== "admin") {
+        setError("Access denied. Admins only.");
+        return;
+      }
+
+      // ✅ Redirect
+      navigate("/dashboard");
+
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
+    }
+  };
 
   // Submit on Enter key
   const handleKeyPress = (e) => {
@@ -80,7 +76,9 @@ const Login = () => {
 
         <Button text="Login" onClick={handleLogin} />
 
-        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+        {error && (
+          <p style={{ color: "red", marginTop: "10px" }}>{error}</p>
+        )}
       </div>
     </div>
   );
@@ -95,11 +93,14 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: { marginBottom: "20px" },
   title: { color: "#ff4d00", marginBottom: "5px" },
   subtitle: { marginBottom: "20px" },
   form: { width: "300px" },
-  row: { display: "flex", justifyContent: "space-between", fontSize: "12px" },
+  row: {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "12px",
+  },
 };
 
 export default Login;
