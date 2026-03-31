@@ -13,28 +13,38 @@ const Login = () => {
 
   // Login function
   const handleLogin = async () => {
-    setError(""); // Reset error
+  setError("");
 
-    if (!email || !password) {
-      setError("Please enter email and password");
+  if (!email || !password) {
+    setError("Please enter email and password");
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      "http://localhost:5000/api/users/login",
+      { email, password }
+    );
+
+    // ✅ Extract token and user from response
+    const { token, user } = response.data;
+
+    // ✅ Check role
+    if (user.role !== "admin") {
+      setError("Access denied. Admins only.");
       return;
     }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/login",
-        { email, password }
-      );
+    // Save token
+    localStorage.setItem("adminToken", token);
 
-      // Save JWT token
-      localStorage.setItem("adminToken", response.data.token);
+    // Redirect
+    navigate("/dashboard");
 
-      // Redirect to dashboard
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    }
-  };
+  } catch (err) {
+    setError(err.response?.data?.message || "Login failed");
+  }
+};
 
   // Submit on Enter key
   const handleKeyPress = (e) => {
