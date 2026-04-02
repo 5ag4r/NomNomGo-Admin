@@ -3,12 +3,12 @@ import API from "../services/api";
 
 const Dashboard = () => {
   const [items, setItems] = useState([]);
-  const [form, setForm] = useState({ name: "", price: "", category: "", imageUrl: "" });
+  const [form, setForm] = useState({ name: "", price: "", category: "", imageUrl: "", availability: true });
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const resetForm = () => setForm({ name: "", price: "", category: "", imageUrl: "" });
+  const resetForm = () => setForm({ name: "", price: "", category: "", imageUrl: "", availability: true });
 
   useEffect(() => {
     const fetchFoods = async () => {
@@ -33,6 +33,7 @@ const Dashboard = () => {
       price: Number(form.price),
       category: form.category.trim(),
       image: form.imageUrl.trim(),
+      availability: form.availability,
     };
 
     if (!newItem.name || !newItem.category || !newItem.image || isNaN(newItem.price) || newItem.price <= 0) {
@@ -57,7 +58,13 @@ const Dashboard = () => {
 
   const editItem = (item) => {
     setEditingId(item._id);
-    setForm({ name: item.name, price: String(item.price), category: item.category, imageUrl: item.image || "" });
+    setForm({ 
+      name: item.name,
+      price: String(item.price),
+      category: item.category,
+      imageUrl: item.image || "",
+      availability: item.availability ?? true,
+    });
   };
 
   const deleteItem = async (id) => {
@@ -72,6 +79,18 @@ const Dashboard = () => {
       } catch (err) {
         alert(err.response?.data?.message || "Delete failed");
       }
+    }
+  };
+
+  const toggleAvailability = async (item) => {
+    try {
+      const updated = await API.put(`/foods/${item._id}`, { availability: !item.availability });
+      setItems((prev) => prev.map((f) => (f._id === item._id ? updated.data : f)));
+      if (editingId === item._id) {
+        setForm((f) => ({ ...f, availability: !item.availability }));
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Could not update availability');
     }
   };
 
@@ -118,6 +137,15 @@ const Dashboard = () => {
             onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
             style={styles.input}
           />
+          <label style={styles.availabilityLabel}>
+            <input
+              type="checkbox"
+              checked={form.availability}
+              onChange={(e) => setForm((f) => ({ ...f, availability: e.target.checked }))}
+              style={styles.checkbox}
+            />
+            Available
+          </label>
           {form.imageUrl && (
             <img
               src={form.imageUrl}
@@ -160,6 +188,7 @@ const Dashboard = () => {
                   <th style={styles.tableCell}>Name</th>
                   <th style={styles.tableCell}>Category</th>
                   <th style={styles.tableCell}>Price</th>
+                  <th style={styles.tableCell}>Availability</th>
                   <th style={styles.tableCell}>Actions</th>
                 </tr>
               </thead>
@@ -176,8 +205,12 @@ const Dashboard = () => {
                     <td style={styles.tableCell}>{item.name}</td>
                     <td style={styles.tableCell}>{item.category}</td>
                     <td style={styles.tableCell}>Rs {item.price.toFixed(2)}</td>
+                    <td style={styles.tableCell}>{item.availability ? "Available" : "Unavailable"}</td>
                     <td style={styles.tableCell}>
                       <button style={styles.actionButton} onClick={() => editItem(item)}>Edit</button>
+                      <button style={styles.secondaryButton} onClick={() => toggleAvailability(item)}>
+                        {item.availability ? "Set Unavailable" : "Set Available"}
+                      </button>
                       <button style={styles.deleteButton} onClick={() => deleteItem(item._id)}>Delete</button>
                     </td>
                   </tr>
