@@ -48,58 +48,110 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <img src="/logo.png" alt="Logo" style={{ width: "100px" }} />
-      <h1 style={styles.title}>WELCOME ADMIN</h1>
-      <p style={styles.subtitle}>Sign In</p>
+    <div style={styles.page}>
+      <div style={styles.leftPane} />
+      <div style={styles.rightPane}>
+        <div style={styles.loginCard}>
+          <img src="/logo.png" alt="Logo" style={styles.logo} />
+          <h1 style={styles.heading}>LOGIN</h1>
 
-      <div style={styles.form}>
-        <InputField
-          type="email"
-          placeholder="Enter Your Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-        <InputField
-          type="password"
-          placeholder="Enter Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-
-        <div style={styles.row}>
-          <span style={{ cursor: "pointer" }}>Remember Me</span>
-          <span style={{ cursor: "pointer" }}>Forgot Password?</span>
+          <div style={styles.formArea}>
+            <InputField
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+            <InputField
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+            <Button text="Log In" onClick={handleLogin} />
+            <button style={styles.forgotButton} onClick={() => alert('Forgot password flow not set')}>Forgot Password?</button>
+            {error && <p style={styles.errorText}>{error}</p>}
+          </div>
         </div>
-
-        <Button text="Login" onClick={handleLogin} />
-
-        {error && (
-          <p style={{ color: "red", marginTop: "10px" }}>{error}</p>
-        )}
       </div>
     </div>
   );
 };
 
 const styles = {
-  container: {
-    height: "100vh",
-    backgroundColor: "#f5a623",
+  page: {
+    width: "100%",
+    minHeight: "100vh",
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f7f1e4",
+    overflow: "hidden",
   },
-  title: { color: "#ff4d00", marginBottom: "5px" },
-  subtitle: { marginBottom: "20px" },
-  form: { width: "300px" },
-  row: {
+  leftPane: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: "58%",
+    height: "100%",
+    backgroundImage: "url('/admin-bg-img.png')",
+    backgroundSize: "cover",
+    backgroundPosition: "center right",
+    clipPath: "ellipse(70% 100% at 0 50%)",
+    zIndex: 1,
+  },
+  rightPane: {
+    position: "relative",
+    width: "33%",
+    maxWidth: "460px",
+    minWidth: "340px",
+    height: "86vh",
+    marginLeft: "calc(18% + 280px)",
     display: "flex",
-    justifyContent: "space-between",
-    fontSize: "12px",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 2,
+  },
+  loginCard: {
+    width: "92%",
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: "16px",
+    border: "1px solid rgba(255,255,255,0.85)",
+    boxShadow: "0 18px 36px rgba(36,55,87,0.18)",
+    backdropFilter: "blur(6px)",
+    padding: "32px 30px",
+    textAlign: "center",
+    marginLeft: "0",
+  },
+  logo: {
+    width: "74px",
+    marginBottom: "12px",
+  },
+  heading: {
+    margin: "0 0 16px",
+    fontSize: "2rem",
+    fontWeight: 700,
+    color: "#1c1c1c",
+    letterSpacing: "1px",
+  },
+  formArea: {
+    width: "100%",
+  },
+  forgotButton: {
+    marginTop: "12px",
+    border: "none",
+    background: "none",
+    color: "#0a58b2",
+    textDecoration: "underline",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+  },
+  errorText: {
+    marginTop: "10px",
+    color: "#d32f2f",
+    fontSize: "0.9rem",
   },
 };
 
