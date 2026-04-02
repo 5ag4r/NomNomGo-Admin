@@ -13,7 +13,8 @@ const Login = () => {
   // Login function
   const handleLogin = async () => {
     setError("");
-
+     
+    // Validations
     if (!email || !password) {
       setError("Please enter email and password");
       return;
@@ -34,7 +35,7 @@ const Login = () => {
         return;
       }
 
-      // ✅ Redirect
+      // Redirect
       navigate("/dashboard");
 
     } catch (err) {
